@@ -1,0 +1,88 @@
+- S3_PATH = "https://frog-feels.s3.amazonaws.com"
+- url = "http://frogfeels.com"
+- description = "A place to draw feelings, and feel feelings."
+
+doctype html
+html
+  include includes/head
+  body.last-week
+    header
+      a(href=url)
+        img.emailHeader(src=emailHeader)
+   
+    if admin
+      .alert Admin
+
+    if admin
+      h2 Users
+      ul
+        each user in users
+          li
+            .remove-user ×
+            .user= user
+      hr
+      input.subject(placeholder="Subject line" value="EDIT ME – 🐸💕 Frog Feels #8")
+      textarea.intro(placeholder="Hello! Say things about this week. Markdown supported.") Hello! Say things about this week
+
+    if email
+      - intro = intro
+      .intro
+        | !{intro}
+
+    section.last-week-review    
+      h2 Last Week
+      p we voted on
+        span= " "
+        span.votes-award(style="background-color: #{awardColor}")= election
+      p.sidenote psst, you can propose the
+        span= " "
+        a(href="#{url}/new-election")
+          span next election
+      each group in feelingGroups
+        .group
+          h1.topic= group.feeling
+          each drawing in group.drawings
+            .drawing
+              img(src="#{S3_PATH}#{drawing.path}")
+            if drawing.award
+              p
+                span.votes-award(style="background-color: #{awardColor}")= drawing.award
+                span.votes-count ^ #{drawing.votes} votes
+            else if drawing.votes
+              p.votes-count ^ #{drawing.votes} votes
+            if admin
+              if drawing.masterpiece
+                p 💖
+              else
+                button.primary-button.has-emoji.make-masterpiece(data-path=drawing.path)
+                  span Make masterpiece 
+                  span.emoji 💖
+              button.primary-button.has-emoji.remove-drawing(data-path=drawing.path)
+                span Remove 
+                span.emoji 🌚
+
+    a(href=url)
+      p.primary-button Draw a Feeling →
+
+    if admin
+      section
+        hr
+        p Ready to generate and send out this week's email?
+        button.primary-button.send-weekly-email.has-emoji(data-secret=emailSecret)
+          span Send Email 💌
+        h1.email-success-message.hidden
+          span Emails Sent! ✨
+          p don't forget to disable process.env.admin
+
+    if email
+      hr
+      section
+        p p.s You can
+          span= " "
+          a(href="#{url}/unsubscribe") unsubscribe
+          span= " "
+          span from future emails. I won't be (too) sad.
+        p
+    else
+      include includes/footer
+      include includes/scripts

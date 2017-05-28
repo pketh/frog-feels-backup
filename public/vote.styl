@@ -1,0 +1,63 @@
+.vote
+  margin-top: 5rem
+
+  .topic
+    font-size: 4.0rem
+    line-height: 4.5rem
+
+  .candidate
+    width: calc(30% - 10px)
+    cursor: pointer
+    border: 10px solid black
+    border-bottom-width: 1rem
+    margin-bottom: 1rem
+    position: relative
+    border-radius: 3px
+    margin-right: 3%
+    transition: all .1s;
+    @media(max-width: 830px)
+      margin-right: 2%
+    @media(max-width: 560px)
+      margin-right: 1%
+    @media(max-width: 420px)
+      margin-right: 0
+    &:hover
+      border-bottom-color: white
+    &:last-child
+      margin-right: 0
+
+  .voted
+    cursor: default
+    border-bottom-color: white
+    border-bottom-width: 2rem
+
+  .unvoted
+    width: calc(26% - 10px)
+    cursor: default
+    opacity: 0.5
+    border-bottom-width: 0
+    &:hover
+      border-color: black
+
+  .voted-notice
+    background-color: white
+    color: black
+    display: inline-block
+    padding: 6px 10px
+    border-radius: 5px
+
+  .voted-message
+    max-width: 500px
+    line-height: 2.4rem
+
+.votes-award
+  margin-right: 10px
+  background-color: #f4df9a
+  color: black
+  padding: 5px 8px
+
+.votes-count
+  background-color: tertiary
+  display: inline-block
+  color: secondary
+  padding: 2px 5px

@@ -1,0 +1,25 @@
+- url = "http://frogfeels.com"
+- description = "A place to draw feelings, and feel feelings."
+- frog = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog.png"
+- frog2x = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog%402x.png"
+
+
+doctype html
+html
+  include includes/head
+  body
+    include includes/header
+
+    section.unsubscribe
+      p Don't want to get weekly emails anymore?
+      form(name="unsubscribe" action="/unsubscribe" method="post")
+        input(type="email" name="email" placeholder="you@space.jam")
+        button.submit.primary-button(type="submit" value="Unsubscribe") Unsubscribe →
+        p.primary-button.unsubscribing-button.hidden
+          span.saving Unsubscribing
+
+    section.unsubscribe.unsubscribe-success.hidden
+      p You've unsubscribed, have a great day. 
+
+  include includes/footer
+  include includes/scripts

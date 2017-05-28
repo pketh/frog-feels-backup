@@ -1,0 +1,27 @@
+section.vote
+
+  if candidates
+    h2 Vote
+    p.topic= election
+    div
+      each candidate in candidates
+        img.candidate(src="#{S3_PATH}#{candidate.path}" data-path=candidate.path)
+  else
+    p 💁 Polls open after the first 3 drawings this week
+
+  section.vote-saved.hidden
+    p.voted-notice Nice Vote!
+    p.voted-message Next week's email will announce the winner 🏆
+
+    section.sign-up
+      form(name="sign-up" action="/sign-up" method="post")
+        input(type="email" name="email" placeholder="you@space.jam")
+        button.submit.primary-button(type="submit" value="Sign Up") Sign Up →
+        p.primary-button.validating-button.hidden
+          span.saving Validating
+
+    a(href="/new-election").hidden
+      p.primary-button Add an Election
+
+    section.sign-up.sign-up-success.hidden
+      p Thanks for signing up!

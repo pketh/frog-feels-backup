@@ -1,0 +1,81 @@
+/* #fdfdfd is white for gmail */
+
+html {
+  background-color: black;
+  color: #fdfdfd;
+  padding-left: 0;
+}
+
+body {
+  padding-left: 10px;
+  background-color: black;
+  color: #fdfdfd;
+  font-size: 16px;
+  font-family: Menlo, Courier, mono-space;
+}
+
+.emailHeader {
+  width: 190px;
+  margin-bottom: 35px;
+  background-color: black;
+}
+
+.intro {
+  margin-bottom: 35px;
+  color: #fdfdfd;
+  background-color: black;
+}
+
+section {
+  background-color: black;
+}
+
+.topic {
+  font-family: Georgia;
+  font-weight: bold;
+  font-style: italic;
+  font-size: 24px;
+  color: #fdfdfd;
+  margin-top: 25px;
+  background-color: black;
+}
+
+.primary-button {
+  display: inline-block;
+  border: 2px #fdfdfd solid;
+  border-radius: 5px;
+  padding: 10px;
+  user-select: none;
+  cursor: pointer;
+  background-color: black;
+  color: #fdfdfd;
+}
+
+.last-week-review {
+  background-color: black;
+}
+
+.last-week-review h2 {
+  color: #858585;
+  font-size: 16px;
+  font-family: Menlo, Courier, mono-space;
+}
+
+.last-week-review img {
+  width: 100%;
+  max-width: 320px;
+}
+
+.votes-award {
+  margin-right: 10px;
+  background-color: #f4d377;
+  color: black;
+  padding: 5px 8px;
+}
+
+.votes-count {
+  background-color: #404040;
+  display: inline-block;
+  color: #858585;
+  padding: 2px 5px;
+}

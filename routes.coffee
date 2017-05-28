@@ -28,7 +28,7 @@ router.get '/', (request, response) ->
       admin: process.env.ADMIN
     console.log 'post render', new Date
   .catch (error) ->
-    console.log error
+    console.error '/', error
 
 router.post '/save-drawing', (request, response) ->
   drawing = request.body.image
@@ -50,7 +50,7 @@ router.post '/remove-drawing', (request, response) ->
   .then (result, error) ->
     response.send true
   .catch (error) ->
-    console.error error
+    console.error '/remove-drawing', error
     response.send false
 
 router.post '/make-masterpiece', (request, response) ->
@@ -58,7 +58,7 @@ router.post '/make-masterpiece', (request, response) ->
   .then (result, error) ->
     response.send true
   .catch (error) ->
-    console.error error
+    console.error '/make-masterpiece', error
     response.send false
 
 router.get '/last-week', (request, response) ->
@@ -83,7 +83,7 @@ router.get '/last-week', (request, response) ->
       awardColor: randomcolor luminosity:'light'
       election: election.question
   .catch (error) ->
-    console.log error
+    console.error '/last-week', error
 
 router.get '/this-week', (request, response) ->
   storage.getThisWeek().then (data) ->
@@ -95,7 +95,7 @@ router.get '/this-week', (request, response) ->
       feelingGroups: groups
       admin: process.env.ADMIN
   .catch (error) ->
-    console.log error
+    console.error '/this-week', error
 
 router.get '/masterpieces', (request, response) ->
   storage.getMasterpieces().then (drawings) ->
@@ -104,8 +104,14 @@ router.get '/masterpieces', (request, response) ->
       drawings: _.shuffle drawings
       admin: process.env.ADMIN
   .catch (error) ->
-    console.log error
+    console.error '/masterpieces', error
 
+router.get '/therapy-drawing', (request, response) ->
+  storage.getTherapyDrawing().then (drawing) ->
+    response.send drawing
+  .catch (error) ->
+    console.error '/therapy-drawing', error
+    
 router.post '/send-weekly-email', (request, response) ->
   data = request.body
   console.log 'request received: ', data
@@ -132,7 +138,7 @@ router.post '/new-election', (request, response) ->
     elections.save(request.body).then (result, error) ->
       response.send result
     .catch (error) ->
-      console.log error
+      console.error '/new-election', error
       response.send false
   else 
     response.send false
@@ -141,7 +147,7 @@ router.post '/add-vote', (request, response) ->
   drawings.addVote(request.body.path).then (result, error) ->
     response.send true
   .catch (error) ->
-    console.log error
+    console.error '/add-vote', error
     response.send false
 
 

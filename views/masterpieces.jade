@@ -1,0 +1,37 @@
+
+- S3_PATH = "https://frog-feels.s3.amazonaws.com"
+- url = "http://frogfeels.com"
+- description = "A place to draw feelings, and feel feelings."
+- frog = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog.png"
+- frog2x = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog%402x.png"
+- dogtable = "https://cdn.gomix.com/dc861570-69f8-4f83-af21-f748b8e9057d%2Fdogtable%402x.png"
+
+doctype html
+html
+  include includes/head
+  body
+    include includes/header
+
+    if admin
+      .alert Admin
+
+    section.masterpieces
+
+      h2 Masterpieces 💕
+      
+      each drawing in drawings
+
+        .masterpiece
+          img.drawing(src="#{S3_PATH}#{drawing.path}" alt=drawing.feeling)
+          .placard
+            .name= drawing.feeling
+            .medium
+              span= drawing.medium
+              span= ", "
+              span= drawing.year
+
+      div
+        img(src=dogtable width="71")
+
+    include includes/footer
+    include includes/scripts

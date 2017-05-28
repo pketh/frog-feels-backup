@@ -1,0 +1,50 @@
+{
+  "//1": "describes your app and its dependencies",
+  "//2": "https://docs.npmjs.com/files/package.json",
+  "//3": "updating this file will download and update your packages",
+  "name": "my-hyperdev-app",
+  "version": "0.0.1",
+  "description": "What am I about?",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/coffee server.coffee"
+  },
+  "dependencies": {
+    "autoprefixer-stylus": "^0.11.0",
+    "body-parser": "^1.17.1",
+    "express": "^5.0.0-alpha.2",
+    "coffee-script": "^1.12.4",
+    "coffee-middleware": "^0.3.0",
+    "consolidate": "^0.14.5",
+    "jade": "^1.11.0",
+    "stylus": "^0.54.5",
+    "stylish": "^1.0.0",
+    "x-ray": "^2.3.2",
+    "underscore": "^1.8.3",
+    "url-regex": "^4.0.0",
+    "node-uuid": "^1.4.8",
+    "moment": "^2.18.1",
+    "knox": "^0.9.2",
+    "mongojs": "^2.4.0",
+    "is-valid-email": "^0.0.2",
+    "juice": "^4.0.2",
+    "sparkpost": "^1.0.1",
+    "marked": "^0.3.6",
+    "randomcolor": "^0.4.4"
+  },
+  "engines": {
+    "node": "4.4.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "#"
+  },
+  "keywords": [
+    "node",
+    "mongo",
+    "drawing",
+    "feelings",
+    "pixels"
+  ],
+  "license": "MIT"
+}

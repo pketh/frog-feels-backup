@@ -1,0 +1,52 @@
+- url = "http://frogfeels.com"
+- description = "A place to draw feelings, and feel feelings."
+- frog = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog.png"
+- frog2x = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Ffrog%402x.png"
+
+doctype html
+html
+  include includes/head
+  body
+    include includes/header
+
+    section.new-election
+      h2 For Freedom
+      h1.topic Add a new election
+      form(name="new-election" action="/new-election" method="post")
+        div
+          label(for="question") Question:
+          input.field-line(type="text" id="question" name="question" placeholder="Which is So Raven?")
+        div
+          label(for="award") Award:
+          input.field-line(type="text" id="award" name="award" placeholder="🏆 That's So Raven")
+        div
+          button.submit.primary-button(type="submit" value="Unsubscribe") Add New Election →
+          p.primary-button.validating-button.hidden
+            span.saving Validating
+
+        p.primary-button.adding-new-election-button.hidden
+          span.saving Adding Election
+
+    section.new-election-success.hidden
+      p 💁 Election added, have a great day.
+
+    // TODO: else if not in admin mode say something like
+      // [tweet] or [email me] your election ideas
+
+    // TODO: always show
+
+    section.elections-list
+      h2 Upcoming Elections
+      table#elections-table
+        tr
+          th Week
+          th Question
+          th Award
+        each election in elections
+          tr
+            td= election.week
+            td= election.question
+            td= election.award
+
+    include includes/footer
+    include includes/scripts

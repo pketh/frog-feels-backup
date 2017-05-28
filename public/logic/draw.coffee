@@ -85,9 +85,9 @@ $('.pixel').on "mousedown touchstart", (event) ->
   unless color is 'black'
     canvasChanged = true
 
-$(document).mouseup ->
-  pressingDown = false
-  # event.target.style.cursor = 'default'
+$(document).mouseup (event) ->
+  if pressingDown
+    pressingDown = false
 
 $('.pixel').on "mousemove", (event) ->
   color = $('.color.active').css('background-color')

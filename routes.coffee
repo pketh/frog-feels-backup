@@ -151,5 +151,4 @@ router.post '/add-vote', (request, response) ->
     response.send false
 
 
-
 module.exports = router

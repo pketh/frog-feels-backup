@@ -6,7 +6,7 @@ PIXEL_SIZE = 20
 CANVAS_SIZE = 400
 canvasChanged = false
 TRANSITION_END = 'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend'
-palettes = ;
+# palettes = ;
 
 selectColor = (context) ->
   console.log 'selectColor'
@@ -25,22 +25,22 @@ highlightActivePaletteColor = (context) ->
 
 updatePalette = () ->
   # console.log palettes 
-  if activePalette
-    for color, index in activePalette
-      paletteContext = $('.palette-color')[index]
-      $(paletteContext).css('background-color', color)
-      if index is 0
-        context = $('.palette-color')[0]
-        selectColor(context)
+  # if activePalette
+  for color, index in activePalette
+    paletteContext = $('.palette-color')[index]
+    $(paletteContext).css('background-color', color)
+    if index is 0
+      context = $('.palette-color')[0]
+      selectColor(context)
 
 newPalette = () ->
-  if palettes
-    totalPalettes = palettes.length - 1
-    if currentPalette > totalPalettes
-      currentPalette = 0
-    activePalette = palettes[currentPalette]
-    updatePalette()
-    currentPalette = currentPalette + 1
+  # if palettes
+  totalPalettes = palettes.length - 1
+  if currentPalette > totalPalettes
+    currentPalette = 0
+  activePalette = palettes[currentPalette]
+  updatePalette()
+  currentPalette = currentPalette + 1
 
 newPalette()
 
@@ -85,9 +85,9 @@ $('.pixel').on "mousedown touchstart", (event) ->
   unless color is 'black'
     canvasChanged = true
 
-$(document).mouseup ->
-  pressingDown = false
-  # event.target.style.cursor = 'default'
+$(document).mouseup (event) ->
+  if pressingDown
+    pressingDown = false
 
 $('.pixel').on "mousemove", (event) ->
   color = $('.color.active').css('background-color')

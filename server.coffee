@@ -24,7 +24,7 @@ app.use bodyParser.json()
 app.use bodyParser.text()
 
 app.use stylish
-  src: __dirname + '/public'
+  src: __dirname + '/public/'
   setup: (renderer) ->
     renderer.use autoprefixer()
   watchCallback: (error, filename) ->
@@ -34,13 +34,7 @@ app.use stylish
       console.log "#{filename} compiled to css"
 
 init = ->
-  console.log 'init', new Date
-  # scrape feelings saves a date, if within 3 hours..
-    # get from db/cache/redis instead?? (w promise)
-    # else scrapefeelings as below:
   storage.scrapeFeelings.then (response) ->
-    # also save response to cache/redis
-    # updateLastScrapedDate -> upsert db.meta.lastScrapped new Date
     console.log '🌴', response
   .then ->
     console.log 'feels scrapped', new Date

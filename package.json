@@ -10,7 +10,7 @@
     "start": "./node_modules/.bin/coffee server.coffee"
   },
   "dependencies": {
-    "autoprefixer-stylus": "^0.11.0",
+    "autoprefixer-stylus": "^0.14.0",
     "body-parser": "^1.17.1",
     "express": "^5.0.0-alpha.2",
     "coffee-script": "^1.12.4",
@@ -30,7 +30,7 @@
     "juice": "^4.0.2",
     "sparkpost": "^1.0.1",
     "marked": "^0.3.6",
-    "randomcolor": "^0.4.4"
+    "randomcolor": "^0.5.1"
   },
   "engines": {
     "node": "4.4.5"

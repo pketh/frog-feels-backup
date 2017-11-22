@@ -19,13 +19,21 @@ router.get '/', (request, response) ->
     elections.get()
   .then (electionData) ->
     election = elections.currentElection electionData
-    response.render 'index.jade',
-      title: 'Frog Feels'
-      feeling: _.sample storage.feelings
-      palettes: _.shuffle utils.palettes
-      candidates: candidates
-      election: election.question
-      admin: process.env.ADMIN
+    console.log '🌎', election
+    if election
+      response.render 'index.jade',
+        title: 'Frog Feels'
+        feeling: _.sample storage.feelings
+        palettes: _.shuffle utils.palettes
+        candidates: candidates
+        election: election.question
+        admin: process.env.ADMIN
+    else
+      response.render 'new-election.jade',
+        title: 'New Election'
+        admin: process.env.ADMIN
+        elections: electionData
+        
     console.log 'post render', new Date
   .catch (error) ->
     console.error '/', error

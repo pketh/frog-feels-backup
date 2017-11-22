@@ -140,3 +140,5 @@ self.connectToDb.then (result) ->
   console.log '💁 database connected', result
 .catch (error) ->
   console.log error
+
+  

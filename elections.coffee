@@ -45,15 +45,19 @@ self =
     true if election.question and election.award
 
   get: ->
+    console.log 'get elections'
+    console.log 'cy', moment().year()
     return new Promise (resolve, reject) ->
       self.db.collection('Elections').find (error, elections) ->
         if elections
-          currentYear = moment().year()
-          recentElections = elections.filter (election) ->
-            if election.week.includes currentYear
-              election
-          recentElections.reverse()
-          resolve recentElections
+          # TODO getNewWeek is faulty when year is filterd for currentyear only
+          # currentYear = moment().year()
+          # recentElections = elections.filter (election) ->
+          #   if election.week.includes currentYear
+          #     election
+          # recentElections.reverse()
+          # console.log recentElections
+          resolve elections
         else
           reject Error 'failed to get elections from db', error
 
@@ -61,6 +65,7 @@ self =
     currentYear = moment().year()
     currentWeek = moment().week()
     current = "#{currentYear}-#{currentWeek}"
+    console.log 'current', current
     for election in elections
       if election.week is current
         return election

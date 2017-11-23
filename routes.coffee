@@ -90,6 +90,7 @@ router.get '/last-week', (request, response) ->
       emailSecret: process.env.FROG_SECRET
       awardColor: randomcolor luminosity:'light'
       election: election.question
+      # email: true
   .catch (error) ->
     console.error '/last-week', error
 
@@ -110,15 +111,16 @@ router.get '/masterpieces', (request, response) ->
     response.render 'masterpieces',
       title: 'Masterpieces'
       drawings: _.shuffle drawings
+      drawingsCount: drawings.length
       admin: process.env.ADMIN
   .catch (error) ->
     console.error '/masterpieces', error
 
-router.get '/therapy-drawing', (request, response) ->
-  storage.getTherapyDrawing().then (drawing) ->
-    response.send drawing
-  .catch (error) ->
-    console.error '/therapy-drawing', error
+# router.get '/therapy-drawing', (request, response) ->
+#   storage.getTherapyDrawing().then (drawing) ->
+#     response.send drawing
+#   .catch (error) ->
+#     console.error '/therapy-drawing', error
     
 router.post '/send-weekly-email', (request, response) ->
   data = request.body

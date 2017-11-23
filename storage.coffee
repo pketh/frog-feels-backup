@@ -117,10 +117,10 @@ self =
           reject Error "failed to get masterpieces from db"
 
   # called as a GET from route
-  getTherapyDrawing: ->
-    masterpieces = self.getMasterpieces()
-    thisWeek = "#{moment().year()}-#{moment().week()}"
-    console.log masterpieces
+  # getTherapyDrawing: ->
+  #   masterpieces = self.getMasterpieces()
+  #   thisWeek = "#{moment().year()}-#{moment().week()}"
+  #   console.log masterpieces
     # add a therapyWeek array item to the drawing
     # check the year-week,
     # if no thisWeek match in drwing, create a db obj by randomly picking a masterpiece, and return the drawing path

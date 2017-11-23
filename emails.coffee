@@ -1,4 +1,3 @@
-
 Sparkpost = require 'sparkpost'
 sparkpost = new Sparkpost()
 juice = require 'juice'

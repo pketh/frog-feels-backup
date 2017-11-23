@@ -12,7 +12,8 @@ routes = require './routes'
 storage = require './storage'
 
 app.use(express.static('public'))
-app.engine('jade', engines.jade)
+app.engine('pug', engines.pug)
+app.set('view engine', 'pug')
 app.use coffeeMiddleware
   bare: true
   src: "public"

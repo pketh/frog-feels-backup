@@ -21,7 +21,7 @@ router.get '/', (request, response) ->
     election = elections.currentElection electionData
     console.log '🌎', election
     if election
-      response.render 'index.jade',
+      response.render 'index',
         title: 'Frog Feels'
         feeling: _.sample storage.feelings
         palettes: _.shuffle utils.palettes
@@ -29,7 +29,7 @@ router.get '/', (request, response) ->
         election: election.question
         admin: process.env.ADMIN
     else
-      response.render 'new-election.jade',
+      response.render 'new-election',
         title: 'New Election'
         admin: process.env.ADMIN
         elections: electionData
@@ -81,7 +81,7 @@ router.get '/last-week', (request, response) ->
     elections.get()
   .then (electionData) ->
     election = elections.lastElection electionData
-    response.render 'last-week.jade',
+    response.render 'last-week',
       title: 'Last Week'
       emailHeader: _.sample utils.emailHeaders
       users: usersData
@@ -98,7 +98,7 @@ router.get '/this-week', (request, response) ->
     console.log 'this-week', data
     drawings.groupDrawings(data)
   .then (groups) ->
-    response.render 'this-week.jade',
+    response.render 'this-week',
       title: 'This Week'
       feelingGroups: groups
       admin: process.env.ADMIN
@@ -107,7 +107,7 @@ router.get '/this-week', (request, response) ->
 
 router.get '/masterpieces', (request, response) ->
   storage.getMasterpieces().then (drawings) ->
-    response.render 'masterpieces.jade',
+    response.render 'masterpieces',
       title: 'Masterpieces'
       drawings: _.shuffle drawings
       admin: process.env.ADMIN
@@ -127,7 +127,7 @@ router.post '/send-weekly-email', (request, response) ->
     emails.generateWeeklyEmail(data, response)
 
 router.get '/unsubscribe', (request, response) ->
-  response.render 'unsubscribe.jade'
+  response.render 'unsubscribe'
 
 router.post '/unsubscribe', (request, response) ->
   console.log request
@@ -135,7 +135,7 @@ router.post '/unsubscribe', (request, response) ->
 
 router.get '/new-election', (request, response) ->
   elections.get().then (elections) ->
-    response.render 'new-election.jade',
+    response.render 'new-election',
       title: 'New Election'
       admin: process.env.ADMIN
       elections: elections

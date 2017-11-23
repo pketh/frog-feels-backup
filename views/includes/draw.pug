@@ -1,7 +1,13 @@
 - keys = "https://s3.amazonaws.com/hyperweb-editor-assets/us-east-1%3A71bc4e4c-4845-48d7-ba7a-4171a4177b55%2Fkeys.svg?1460915778582"
+- critic = "https://cdn.glitch.com/05a4b943-dadc-44ad-9590-ac82c44561ae%2Fart-critic%402x.png?1510531411691"
+- bubbles = "https://cdn.glitch.com/05a4b943-dadc-44ad-9590-ac82c44561ae%2Fbubble-point%402x.png?1510533849443"
+
 section.this-week.draw
   h2 A feeling
   p.topic= feeling
+    // a.topic-secondary(href="/")
+    //   span= " "
+    //   span (↩)
 
 // section.feeling
 
@@ -27,13 +33,7 @@ section.palette
         .key-guide 6
     .color-well
       li.shuffle(title="shuffle") 
-        span.label 
-          span (
-          span /
-          span ・
-          span ・
-          span )
-          span ノ
+        span.label (/・・)ノ
         .key-guide 7
 
 section.drawing
@@ -49,6 +49,10 @@ section.drawing
 canvas#canvas(width='400' height='400')
 
 section.save-drawing
+  .art-critic
+    img.critic(src=critic alt="art critic" width=55)
+    img.bubbles(src=bubbles alt="bubbles" width=20)
+    p#critique Paint with passion
   p.primary-button.save-button Share Masterpiece →
   p.primary-button.saving-button.hidden 
     span.saving Saving

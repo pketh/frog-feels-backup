@@ -14,20 +14,9 @@ section.this-week
   .topic
     font-size: 4.0rem
     line-height: 4.5rem
-    // &:first-letter
-    //   text-transform: uppercase
 
 section.draw-intro
   margin-bottom: 6rem
-
-// section.feeling
-//   p
-//     font-family: plantin
-//     font-style: italic
-//     font-size: 2rem
-//     line-height: 2.4rem
-//     &:first-letter
-//       text-transform: uppercase
 
 section.draw
   margin-bottom: 4rem
@@ -40,6 +29,10 @@ palette-color-small = 30px
 section.palette
   user-select: none
   margin-bottom: 4rem
+  @media(max-width: 400px)
+    margin-bottom: 0
+  .colors
+    margin: 0
   .color-well
     padding-right: 1rem
     display: inline-block
@@ -106,25 +99,8 @@ section.palette
     @media(max-width: 570px)
       vertical-align: 45%
     &:hover
-      // width: auto
-      // height: auto
-      // padding-bottom: 1rem
       color: white
       cursor: pointer
-      // margin: 0
-      // .label
-      //   span:nth-child(1)
-      //     color: pink
-      //   span:nth-child(2)
-      //     color: #ff6f6f
-      //   span:nth-child(3)
-      //     color: Cyan
-      //   span:nth-child(4)
-      //     color: aquamarine
-      //   span:nth-child(5)
-      //     color: DarkViolet
-      //   span:nth-child(6)
-      //     color: blue
     .key-guide
       bottom: -60%
 
@@ -189,6 +165,18 @@ section.drawing
     font-size: 18px
     vertical-align: middle
 
+.art-critic
+  img
+    vertical-align: middle
+  .bubbles
+    margin-right: 5px
+  p
+    vertical-align: middle
+    display: inline-block
+    color: secondary
+    // &.success
+    //   color: white
+    
 section.save-drawing,
 section.drawing-saved
   margin-bottom: 0rem

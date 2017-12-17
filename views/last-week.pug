@@ -1,14 +1,16 @@
 - S3_PATH = "https://frog-feels.s3.amazonaws.com"
-- url = "http://frogfeels.com"
 - description = "A place to draw feelings, and feel feelings."
 
 doctype html
 html
   include includes/head
   body.last-week
-    header
-      a(href=url)
-        img.emailHeader(src=emailHeader)
+    if email
+      header
+          a(href="http://frogfeels.com/last-week")
+            img.emailHeader(src=emailHeader)
+    else
+      include includes/header
    
     if admin
       .alert Admin
@@ -21,8 +23,8 @@ html
             .remove-user ×
             .user= user
       hr
-      input.subject(placeholder="Subject line" value="EDIT ME – 🐸💕 Frog Feels #8")
-      textarea.intro(placeholder="Hello! Say things about this week. Markdown supported.") Hello! Say things about this week
+      input.subject(placeholder="Subject line" value="EDIT ME – 🐸💕 Frog Feels #70")
+      textarea.intro(placeholder="Hello! Say things about this week (markdown supported)")
 
     if email
       - intro = intro
@@ -33,23 +35,23 @@ html
       h2 Last Week
       p we voted on
         span= " "
-        span.votes-award(style="background-color: #{awardColor}")= election
+        span.votes-award(style=`background-color: ${awardColor}`)= election
       p.sidenote psst, you can propose the
         span= " "
-        a(href="#{url}/new-election")
+        a(href='/new-election')
           span next election
       each group in feelingGroups
         .group
           h1.topic= group.feeling
           each drawing in group.drawings
             .drawing
-              img(src="#{S3_PATH}#{drawing.path}")
+              img(src=`${S3_PATH}${drawing.path}`)
             if drawing.award
               p
-                span.votes-award(style="background-color: #{awardColor}")= drawing.award
-                span.votes-count ^ #{drawing.votes} votes
+                span.votes-award(style=`background-color: ${awardColor}`)= drawing.award
+                span.votes-count= `^ ${drawing.votes} votes`
             else if drawing.votes
-              p.votes-count ^ #{drawing.votes} votes
+              p.votes-count= `^ ${drawing.votes} votes`
             if admin
               if drawing.masterpiece
                 p 💖
@@ -76,10 +78,10 @@ html
 
     if email
       hr
-      section
+      section.email-unsubscribe
         p p.s You can
           span= " "
-          a(href="#{url}/unsubscribe") unsubscribe
+          a(href='http://frogfeels.com/unsubscribe') unsubscribe
           span= " "
           span from future emails. I won't be (too) sad.
         p

@@ -17,12 +17,12 @@ html
 
     section.masterpieces
 
-      h2 Masterpieces 💕
+      h2= `${drawingsCount} Masterpieces 💕`
       
       each drawing in drawings
 
         .masterpiece
-          img.drawing(src="#{S3_PATH}#{drawing.path}" alt=drawing.feeling)
+          img.drawing(src=`${S3_PATH}${drawing.path}` alt=drawing.feeling)
           .placard
             .name= drawing.feeling
             .medium

@@ -1,10 +1,17 @@
+# frog = "#3f891e"
+
 self = 
   
+  # each palette should be pleasing on it's own
+  # each palette has contrast
+  # each palette should be vibrant and cheerful in it's own way
+  # all colors between palettes should be distinct enough
+  # does come off too basic/primary/lego-y
   palettes: [
-    ['gold', 'Magenta', 'OrangeRed', 'LimeGreen']
-    ['Orchid', 'Teal', 'Olive', 'Blue']
-    ['BlueViolet', 'DarkOrange', 'DarkRed', 'LightSkyBlue']
-    ['Cyan', 'SaddleBrown', 'LightPink', 'GoldenRod']
+    ['blueviolet', 'blue', 'Magenta', 'gold']
+    ['OliveDrab', 'SpringGreen', 'plum', 'Peru']
+    ['CornflowerBlue', 'HotPink', 'darkred', 'MidnightBlue']
+    ['Orange', 'Sienna', 'Pink', 'OrangeRed']
   ]
   
   emailHeaders: [

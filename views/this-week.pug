@@ -10,9 +10,6 @@ html
   body
     include includes/header
 
-    if admin
-      .alert Admin
-
     section.last-week-review
 
       h2 This Week
@@ -21,10 +18,10 @@ html
             h1.topic= group.feeling
             each drawing in group.drawings
               .drawing
-                img(src="#{S3_PATH}#{drawing.path}")
+                img(src=`${S3_PATH}${drawing.path}`)
                 if admin
                   p
-                    .votes-count ^ #{drawing.votes} votes
+                    .votes-count= `^ ${drawing.votes} votes`
                   if drawing.masterpiece
                     p 💖
                   else

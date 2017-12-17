@@ -1,12 +1,13 @@
 activePalette = []
 currentPalette = 0
+paletteWasShuffled = false
 pressingDown = false
 pixels = []
 PIXEL_SIZE = 20
 CANVAS_SIZE = 400
 canvasChanged = false
 TRANSITION_END = 'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend'
-# palettes = ;
+evaluatedDrawingState = ""
 
 selectColor = (context) ->
   console.log 'selectColor'
@@ -24,8 +25,6 @@ highlightActivePaletteColor = (context) ->
     updateFeelsHeaderColor()
 
 updatePalette = () ->
-  # console.log palettes 
-  # if activePalette
   for color, index in activePalette
     paletteContext = $('.palette-color')[index]
     $(paletteContext).css('background-color', color)
@@ -34,15 +33,12 @@ updatePalette = () ->
       selectColor(context)
 
 newPalette = () ->
-  # if palettes
   totalPalettes = palettes.length - 1
   if currentPalette > totalPalettes
     currentPalette = 0
   activePalette = palettes[currentPalette]
   updatePalette()
   currentPalette = currentPalette + 1
-
-newPalette()
 
 $('.color').on 'click', ->
   console.log 'color click'
@@ -73,26 +69,28 @@ $(document).keypress (key) ->
 
 $('.shuffle').on 'click', ->
   console.log 'shuffle'
+  paletteWasShuffled = true
   newPalette()
 
 $('.shuffle').hover ->
   console.log this
 
+  
+# PAINTING
+  
 $('.pixel').on "mousedown touchstart", (event) ->
   color = $('.color.active').css('background-color')
   pressingDown = true
   $(@).css("background-color", color)
+  critiqueDrawing()
   unless color is 'black'
     canvasChanged = true
-
-$(document).mouseup (event) ->
-  if pressingDown
-    pressingDown = false
 
 $('.pixel').on "mousemove", (event) ->
   color = $('.color.active').css('background-color')
   if pressingDown
     $(event.target).css("background-color", color)
+    critiqueDrawing()
 
 $('.pixel').on "touchmove", (event) ->
   color = $('.color.active').css('background-color')
@@ -103,6 +101,87 @@ $('.pixel').on "touchmove", (event) ->
     console.log realTarget
     if $(realTarget).hasClass 'pixel'
       $(realTarget).css("background-color", color)
+      critiqueDrawing()
+
+$(document).mouseup (event) ->
+  if pressingDown
+    pressingDown = false
+
+      
+# ART CRITIQUE
+
+drawingIsTooEmpty = ->
+  EMPTY_PIXEL = "rgb(0, 0, 0)"
+  PIXELS_PER_ROW= 20
+  PIXELS_TOTAL = 400
+  filledPixels = []
+  thirdLastRowIndex = PIXELS_TOTAL - (PIXELS_PER_ROW * 3)
+  lastThreeRowsPixels = _.rest(pixels, thirdLastRowIndex)
+  lastThreeRowsPixels.filter (pixel) ->
+    if pixel != EMPTY_PIXEL
+      filledPixels.push pixel
+  true unless filledPixels.length
+
+drawingIsNotEnoughColors = ->
+  EMPTY_PIXEL = "rgb(0, 0, 0)"
+  coloredPixels = []
+  pixels.filter (pixel) ->
+    if pixel != EMPTY_PIXEL
+      coloredPixels.push pixel
+  true unless _.uniq(coloredPixels).length >= 3
+
+getCritique = ->
+  if drawingIsTooEmpty()
+    if evaluatedDrawingState != 'drawingIsTooEmpty'
+      evaluatedDrawingState = 'drawingIsTooEmpty'
+      responses = [
+        "Paint with passion"
+        "Don’t hold back"
+        "Fill our hearts with art"
+        "Bare your soul to us"
+      ]
+      _.sample responses
+  else if drawingIsNotEnoughColors()
+    if evaluatedDrawingState != 'drawingIsNotEnoughColors'
+      evaluatedDrawingState = 'drawingIsNotEnoughColors'
+      responses = [
+        "I’d love more colors"
+        "Something is still missing"
+        "Enlighten me with more colors"
+        "The art world needs more colors"
+      ]
+      _.sample responses
+  else if paletteWasShuffled
+    if evaluatedDrawingState != 'paletteWasShuffled'
+      evaluatedDrawingState = 'paletteWasShuffled'
+      responses = [
+        "Fresh like a morning baguette!"
+        "You really know how to create real art!"
+        "I’m telling everyone about your talent!"
+        "A fine addition to my family heirlooms!"
+        "Provoking and shocking, I love it!"
+        "This touches my soul, bravo!"
+        "I hope you achieve all your dreams!"
+      ]
+      _.sample responses
+  else
+    if evaluatedDrawingState != 'paletteWasNotShuffled'
+      evaluatedDrawingState = 'paletteWasNotShuffled'
+      responses = [
+        "I want more radical colors with (/・・)ノ"
+        "Summer colors (/・・)ノ will add more passion"
+        "With even more colors, this will be wow (/・・)ノ"
+        "Click (/・・)ノ for even more colors"
+      ]
+      _.sample responses
+
+
+critiqueDrawing = ->
+  getPixels()
+  critique = getCritique()
+  if critique
+    element = document.getElementById('critique')
+    element.innerText = critique
 
 
 # SAVING
@@ -165,12 +244,20 @@ drawPixelsOnCanvas = (pixels) ->
     if index < 400
       paintCanvasRow(pixelColor, index, 19)
 
+iterateDrawingsCount = () ->
+  count = 1
+  drawings = localStorage.getItem('drawingsCount')
+  if drawings
+    count = parseInt(drawings) + count
+  localStorage.setItem('drawingsCount', count)
+  
 drawingSaved = () ->
   $('.save-drawing').hide()
   $('.palette').hide()
   $('.drawing').hide()
   $('#canvas').show()
   $('.drawing-saved').show()
+  iterateDrawingsCount()
 
 saveCanvas = () ->
   canvas = document.getElementById("canvas")
@@ -195,7 +282,12 @@ $('.save-button').on 'click touchstart', ->
   if canvasChanged
     $(this).addClass 'hidden'
     $('.saving-button').removeClass 'hidden'
+    pixels = []
     getPixels()
     drawPixelsOnCanvas(pixels)
     saveCanvas()
     updateDrawingsCreatedCount()
+
+$ ->
+  newPalette()
+  critiqueDrawing()

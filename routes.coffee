@@ -19,13 +19,21 @@ router.get '/', (request, response) ->
     elections.get()
   .then (electionData) ->
     election = elections.currentElection electionData
-    response.render 'index.jade',
-      title: 'Frog Feels'
-      feeling: _.sample storage.feelings
-      palettes: _.shuffle utils.palettes
-      candidates: candidates
-      election: election.question
-      admin: process.env.ADMIN
+    console.log '🌎', election
+    if election
+      response.render 'index',
+        title: 'Frog Feels'
+        feeling: _.sample storage.feelings
+        palettes: _.shuffle utils.palettes
+        candidates: candidates
+        election: election.question
+        admin: process.env.ADMIN
+    else
+      response.render 'new-election',
+        title: 'New Election'
+        admin: process.env.ADMIN
+        elections: electionData
+        
     console.log 'post render', new Date
   .catch (error) ->
     console.error '/', error
@@ -73,7 +81,7 @@ router.get '/last-week', (request, response) ->
     elections.get()
   .then (electionData) ->
     election = elections.lastElection electionData
-    response.render 'last-week.jade',
+    response.render 'last-week',
       title: 'Last Week'
       emailHeader: _.sample utils.emailHeaders
       users: usersData
@@ -82,6 +90,7 @@ router.get '/last-week', (request, response) ->
       emailSecret: process.env.FROG_SECRET
       awardColor: randomcolor luminosity:'light'
       election: election.question
+      # email: true
   .catch (error) ->
     console.error '/last-week', error
 
@@ -90,7 +99,7 @@ router.get '/this-week', (request, response) ->
     console.log 'this-week', data
     drawings.groupDrawings(data)
   .then (groups) ->
-    response.render 'this-week.jade',
+    response.render 'this-week',
       title: 'This Week'
       feelingGroups: groups
       admin: process.env.ADMIN
@@ -99,18 +108,19 @@ router.get '/this-week', (request, response) ->
 
 router.get '/masterpieces', (request, response) ->
   storage.getMasterpieces().then (drawings) ->
-    response.render 'masterpieces.jade',
+    response.render 'masterpieces',
       title: 'Masterpieces'
       drawings: _.shuffle drawings
+      drawingsCount: drawings.length
       admin: process.env.ADMIN
   .catch (error) ->
     console.error '/masterpieces', error
 
-router.get '/therapy-drawing', (request, response) ->
-  storage.getTherapyDrawing().then (drawing) ->
-    response.send drawing
-  .catch (error) ->
-    console.error '/therapy-drawing', error
+# router.get '/therapy-drawing', (request, response) ->
+#   storage.getTherapyDrawing().then (drawing) ->
+#     response.send drawing
+#   .catch (error) ->
+#     console.error '/therapy-drawing', error
     
 router.post '/send-weekly-email', (request, response) ->
   data = request.body
@@ -119,7 +129,7 @@ router.post '/send-weekly-email', (request, response) ->
     emails.generateWeeklyEmail(data, response)
 
 router.get '/unsubscribe', (request, response) ->
-  response.render 'unsubscribe.jade'
+  response.render 'unsubscribe'
 
 router.post '/unsubscribe', (request, response) ->
   console.log request
@@ -127,7 +137,7 @@ router.post '/unsubscribe', (request, response) ->
 
 router.get '/new-election', (request, response) ->
   elections.get().then (elections) ->
-    response.render 'new-election.jade',
+    response.render 'new-election',
       title: 'New Election'
       admin: process.env.ADMIN
       elections: elections

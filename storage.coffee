@@ -4,7 +4,6 @@ knox = require 'knox'
 Xray = require 'x-ray'
 xray = Xray()
 _ = require 'underscore'
-urlRegex = require "url-regex"
 moment = require 'moment'
 
 db = mongojs("#{process.env.DB_USER}:#{process.env.DB_PASS}@#{process.env.DB_URL}")
@@ -24,11 +23,26 @@ self =
       else
         reject Error 'failed to scrape feelings.blackfriday'
 
+  isBlacklisted: (feeling) ->
+    BLACKLIST = [
+      'spam'
+      'filter'
+      'http://'
+      'https://'
+      'spamfilter'
+      'sad'
+    ]
+    value = false
+    BLACKLIST.forEach (word) ->
+      if feeling.includes(word)
+        value = true
+    value
+
   filterFeelings: ->
     self.feelings = _.compact self.feelings
     self.feelings = self.feelings.slice(3, 30)
-    self.feelings = _.filter self.feelings, (feeling) ->
-      feeling.length < 400 and not urlRegex().test feeling
+    self.feelings = self.feelings.filter (feeling) ->
+      feeling.length < 400 and !self.isBlacklisted feeling
 
   s3: knox.createClient
     key: process.env.S3_ACCESS_KEY_ID

@@ -21,6 +21,7 @@ self =
       return {address: {email: user}}
 
   generateWeeklyEmail: (data, response) -> 
+    console.log 'generating weekly'
     feelingGroups = []
     storage.getLastWeek().then (results) ->
       drawings.groupDrawings(results)
@@ -32,7 +33,7 @@ self =
       elections.get()
     .then (electionData) ->
       election = elections.lastElection electionData
-      response.render 'last-week.jade',
+      response.render 'last-week',
         feelingGroups: feelingGroups
         emailHeader: _.sample utils.emailHeaders
         intro: marked data.intro

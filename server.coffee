@@ -5,7 +5,6 @@ engines = require 'consolidate'
 bodyParser = require 'body-parser'
 stylish = require 'stylish'
 autoprefixer = require 'autoprefixer-stylus'
-urlRegex = require "url-regex"
 
 PORT = process.env.PORT # 3000
 routes = require './routes'

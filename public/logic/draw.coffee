@@ -1,19 +1,45 @@
 activePalette = []
-currentPalette = 0
-paletteWasShuffled = false
+currentPaletteIndex = 0
+paletteWasUpdated = false
 pressingDown = false
-pixels = []
-PIXEL_SIZE = 20
-CANVAS_SIZE = 400
+currentStroke = []
+strokeUndoHistory = []
+strokeRedoHistory = []
 canvasChanged = false
 TRANSITION_END = 'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend'
 evaluatedDrawingState = ""
 
+# from https://stackoverflow.com/questions/9923890/removing-duplicate-objects-with-underscore-for-javascript
+_.mixin
+  deepUniq: (coll) ->
+    result = []
+    remove_first_el_duplicates = (coll2) ->
+      rest = _.rest(coll2)
+      first = _.first(coll2)
+      result.push first
+      equalsFirst = (el) -> _.isEqual(el,first)
+      newColl = _.reject rest, equalsFirst
+      unless _.isEmpty newColl
+        remove_first_el_duplicates newColl
+    remove_first_el_duplicates(coll)
+    result
+
+setPixelHeight = ->
+  pixels = document.querySelectorAll('.pixel')
+  width = pixels[0].offsetWidth
+  for pixel in pixels
+    pixel.style.height = width - 1
+    
+
+# PALETTES
+    
 selectColor = (context) ->
-  console.log 'selectColor'
   color = $(context).css('background-color')
   highlightActivePaletteColor(context)
 
+currentColor = () -> 
+  $('.color.active').css('background-color')
+  
 updateFeelsHeaderColor = () ->
   color = $('.active').css('background-color')
   $('.feels').css('color', color)
@@ -31,104 +57,159 @@ updatePalette = () ->
     if index is 0
       context = $('.palette-color')[0]
       selectColor(context)
+  currentPaletteIndex = nextPaletteIndex()
+  nextPalettePreviewColors()
 
 newPalette = () ->
   totalPalettes = palettes.length - 1
-  if currentPalette > totalPalettes
-    currentPalette = 0
-  activePalette = palettes[currentPalette]
+  if currentPaletteIndex > totalPalettes
+    currentPaletteIndex = 0
+  activePalette = palettes[currentPaletteIndex]
   updatePalette()
-  currentPalette = currentPalette + 1
-
+  
 $('.color').on 'click', ->
   console.log 'color click'
   context = @
   selectColor(context)
 
-$(document).keypress (key) ->
-  if key.which is 49
+$(document).keypress (event) ->
+  redoKeys = (event.metaKey and event.shiftKey and event.key is 'z') or (event.ctrlKey and event.key is 'y')
+  undoKeys = (event.metaKey and event.key is 'z') or (event.ctrlKey and event.key is 'z')
+  if event.key is "1"
     context = $('.color')[0]
     selectColor(context)
-  else if key.which is 50
+  else if event.key is "2"
     context = $('.color')[1]
     selectColor(context)
-  else if key.which is 51
+  else if event.key is "3"
     context = $('.color')[2]
     selectColor(context)
-  else if key.which is 52
+  else if event.key is "4"
     context = $('.color')[3]
     selectColor(context)
-  else if key.which is 53
+  else if event.key is "5"
     context = $('.color')[4]
     selectColor(context)
-  else if key.which is 54
+  else if event.key is "6"
     context = $('.color')[5]
     selectColor(context)
-  else if key.which is 55
-    $('.shuffle').trigger('click')
+  else if event.key is "7"
+    $('.next-palette').trigger('click')
+  else if redoKeys
+    event.preventDefault()
+    redoStroke()
+  else if undoKeys
+    event.preventDefault()
+    undoStroke()
 
-$('.shuffle').on 'click', ->
-  console.log 'shuffle'
-  paletteWasShuffled = true
-  newPalette()
+nextPaletteIndex = () ->
+  totalPalettes = palettes.length - 1
+  if (currentPaletteIndex + 1) > totalPalettes
+    0
+  else 
+    currentPaletteIndex + 1
 
-$('.shuffle').hover ->
-  console.log this
+nextPalette = () ->
+  activePalette = palettes[nextPaletteIndex()]
+  updatePalette()
+
+nextPalettePreviewColors = () ->
+  colors = palettes[nextPaletteIndex()].slice(0,3)
+  for color, index in colors
+    $($('.next-palette-color')[index]).css("color", color)
 
   
+$('.next-palette').on 'click', ->
+  paletteWasUpdated = true
+  nextPalette()
+
+
 # PAINTING
-  
+
+createPixel = (target) ->
+  pixelItem =
+    x: target.dataset.x
+    y: target.dataset.y
+    color: currentColor()
+  currentStroke.push pixelItem
+  return pixelItem
+
+paintPixel = (pixel) ->
+  element = document.querySelectorAll("[data-x='#{pixel.x}'][data-y='#{pixel.y}']")
+  $(element).css("background-color", pixel.color)
+
 $('.pixel').on "mousedown touchstart", (event) ->
-  color = $('.color.active').css('background-color')
+  currentStroke = []
+  strokeRedoHistory = []
   pressingDown = true
-  $(@).css("background-color", color)
+  pixel = createPixel(event.target)
+  paintPixel pixel
   critiqueDrawing()
-  unless color is 'black'
+  unless currentColor() is 'black'
     canvasChanged = true
 
 $('.pixel').on "mousemove", (event) ->
-  color = $('.color.active').css('background-color')
   if pressingDown
-    $(event.target).css("background-color", color)
+    pixel = createPixel(event.target)
+    paintPixel pixel
     critiqueDrawing()
 
 $('.pixel').on "touchmove", (event) ->
-  color = $('.color.active').css('background-color')
   if pressingDown
     event.preventDefault()
     myLocation = event.originalEvent.changedTouches[0]
     realTarget = document.elementFromPoint(myLocation.clientX, myLocation.clientY) or @
     console.log realTarget
     if $(realTarget).hasClass 'pixel'
-      $(realTarget).css("background-color", color)
+      pixel = createPixel(realTarget)
+      paintPixel pixel
       critiqueDrawing()
 
 $(document).mouseup (event) ->
   if pressingDown
     pressingDown = false
+    stroke = _.deepUniq currentStroke
+    strokeUndoHistory.push stroke
 
-      
+
+# HISTORY
+
+clearDrawing = () ->
+  drawing = $('.drawing .pixel')
+  for pixel in drawing
+    pixel.removeAttribute "style"
+ 
+
+undoStroke = () ->
+  if strokeUndoHistory.length
+    strokeRedoHistory.push strokeUndoHistory.pop()
+    clearDrawing()
+    for stroke in strokeUndoHistory
+      for pixel in stroke
+        paintPixel pixel
+
+redoStroke = () ->
+  if strokeRedoHistory.length  
+    currentRedo = strokeRedoHistory.pop()
+    strokeUndoHistory.push currentRedo
+    for pixel in currentRedo
+      paintPixel pixel
+    
+    
 # ART CRITIQUE
 
 drawingIsTooEmpty = ->
-  EMPTY_PIXEL = "rgb(0, 0, 0)"
-  PIXELS_PER_ROW= 20
-  PIXELS_TOTAL = 400
-  filledPixels = []
-  thirdLastRowIndex = PIXELS_TOTAL - (PIXELS_PER_ROW * 3)
-  lastThreeRowsPixels = _.rest(pixels, thirdLastRowIndex)
-  lastThreeRowsPixels.filter (pixel) ->
-    if pixel != EMPTY_PIXEL
-      filledPixels.push pixel
-  true unless filledPixels.length
+  pixels = _.flatten(strokeUndoHistory)
+  bottomPixels = pixels.filter (pixel) ->
+    pixel.y > 15 and pixel.color != "rgb(0, 0, 0)"
+  true unless bottomPixels.length
 
 drawingIsNotEnoughColors = ->
-  EMPTY_PIXEL = "rgb(0, 0, 0)"
-  coloredPixels = []
-  pixels.filter (pixel) ->
-    if pixel != EMPTY_PIXEL
-      coloredPixels.push pixel
-  true unless _.uniq(coloredPixels).length >= 3
+  pixels = _.flatten(strokeUndoHistory)
+  colorsUsed = []
+  for pixel in pixels
+    colorsUsed.push pixel.color
+  true unless _.uniq(colorsUsed).length >= 3
 
 getCritique = ->
   if drawingIsTooEmpty()
@@ -151,9 +232,9 @@ getCritique = ->
         "The art world needs more colors"
       ]
       _.sample responses
-  else if paletteWasShuffled
-    if evaluatedDrawingState != 'paletteWasShuffled'
-      evaluatedDrawingState = 'paletteWasShuffled'
+  else if paletteWasUpdated
+    if evaluatedDrawingState != 'paletteWasUpdated'
+      evaluatedDrawingState = 'paletteWasUpdated'
       responses = [
         "Fresh like a morning baguette!"
         "You really know how to create real art!"
@@ -168,16 +249,14 @@ getCritique = ->
     if evaluatedDrawingState != 'paletteWasNotShuffled'
       evaluatedDrawingState = 'paletteWasNotShuffled'
       responses = [
-        "I want more radical colors with (/・・)ノ"
-        "Summer colors (/・・)ノ will add more passion"
-        "With even more colors, this will be wow (/・・)ノ"
-        "Click (/・・)ノ for even more colors"
+        "I want more radical colors"
+        "Summer colors will add more passion"
+        "With even more colors, this will be wow"
+        "Color my world"
       ]
       _.sample responses
 
-
 critiqueDrawing = ->
-  getPixels()
   critique = getCritique()
   if critique
     element = document.getElementById('critique')
@@ -186,64 +265,17 @@ critiqueDrawing = ->
 
 # SAVING
 
-getPixels = () ->
-  drawing = $('.drawing .pixel')
-  pixels = []
-  for pixel in drawing
-    pixelColor = $(pixel).css('background-color')
-    pixels.push(pixelColor)
-
-paintCanvasRow = (pixelColor, index, row) ->
-  X = PIXEL_SIZE * index - (CANVAS_SIZE * row)
-  Y = PIXEL_SIZE * row
+paintCanvas = () ->
+  PIXEL_SIZE = 20
   canvas = document.getElementById("canvas")
   context = canvas.getContext '2d'
-  context.fillStyle = pixelColor
-  context.fillRect(X, Y, PIXEL_SIZE, PIXEL_SIZE)
-
-drawPixelsOnCanvas = (pixels) ->
-  for pixelColor, index in pixels
-    if index < 20
-      paintCanvasRow(pixelColor, index, 0)
-    if index < 40
-      paintCanvasRow(pixelColor, index, 1)
-    if index < 60
-      paintCanvasRow(pixelColor, index, 2)
-    if index < 80
-      paintCanvasRow(pixelColor, index, 3)
-    if index < 100
-      paintCanvasRow(pixelColor, index, 4)
-    if index < 120
-      paintCanvasRow(pixelColor, index, 5)
-    if index < 140
-      paintCanvasRow(pixelColor, index, 6)
-    if index < 160
-      paintCanvasRow(pixelColor, index, 7)
-    if index < 180
-      paintCanvasRow(pixelColor, index, 8)
-    if index < 200
-      paintCanvasRow(pixelColor, index, 9)
-    if index < 220
-      paintCanvasRow(pixelColor, index, 10)
-    if index < 240
-      paintCanvasRow(pixelColor, index, 11)
-    if index < 260
-      paintCanvasRow(pixelColor, index, 12)
-    if index < 280
-      paintCanvasRow(pixelColor, index, 13)
-    if index < 300
-      paintCanvasRow(pixelColor, index, 14)
-    if index < 320
-      paintCanvasRow(pixelColor, index, 15)
-    if index < 340
-      paintCanvasRow(pixelColor, index, 16)
-    if index < 360
-      paintCanvasRow(pixelColor, index, 17)
-    if index < 380
-      paintCanvasRow(pixelColor, index, 18)
-    if index < 400
-      paintCanvasRow(pixelColor, index, 19)
-
+  for stroke in strokeUndoHistory
+    for pixel in stroke
+      x = (pixel.x - 1) * PIXEL_SIZE
+      y = (pixel.y - 1) * PIXEL_SIZE
+      context.fillStyle = pixel.color
+      context.fillRect(x, y, PIXEL_SIZE, PIXEL_SIZE)
+  
 iterateDrawingsCount = () ->
   count = 1
   drawings = localStorage.getItem('drawingsCount')
@@ -259,20 +291,29 @@ drawingSaved = () ->
   $('.drawing-saved').show()
   iterateDrawingsCount()
 
+pxon = ->
+  feeling = $('.topic')[0].textContent
+  pxon =
+    exif:
+      software: 'http://frogfeels.com'
+      artist: 'you'
+      imageDescription: feeling
+      copyright: '🌎'
+      dateTime: new Date()
+    pxif:
+      pixels: _.flatten(strokeUndoHistory) 
+  console.log JSON.stringify pxon, null, '\t'
+  return pxon
+
 saveCanvas = () ->
   canvas = document.getElementById("canvas")
   drawing = canvas.toDataURL("image/png")
   feeling = $('.topic')[0].textContent
-  
-  x = document.getElementById("drawing-result")
-  x.src = drawing
-
-  $.post '/save-drawing', {'image': drawing, feeling: feeling}, (response) ->
-    if response.code is 200
-      drawingSaved()
-    else
-      console.error 'saveCanvas() error'
-      drawingSaved()
+  pxon = pxon()
+  result = document.getElementById("drawing-result")
+  result.src = drawing
+  $.post '/save-drawing', {'image': drawing, feeling: feeling, pxon: pxon}
+  drawingSaved()
 
 updateDrawingsCreatedCount = ->
   count = window.localStorage.getItem 'drawingsCreated'
@@ -281,17 +322,21 @@ updateDrawingsCreatedCount = ->
     window.localStorage.setItem 'drawingsCreated', newCount
   else
     window.localStorage.setItem 'drawingsCreated', 1
-      
+  console.log "🖼 #{window.localStorage.drawingsCreated} masterpieces created"
+
 $('.save-button').on 'click touchstart', ->
   if canvasChanged
     $(this).addClass 'hidden'
     $('.saving-button').removeClass 'hidden'
-    pixels = []
-    getPixels()
-    drawPixelsOnCanvas(pixels)
+    # create gif from canvas frames
+    paintCanvas()
     saveCanvas()
     updateDrawingsCreatedCount()
 
-$ ->
+window.addEventListener 'load', ->
+  setPixelHeight()
   newPalette()
   critiqueDrawing()
+
+window.addEventListener 'resize', ->
+  setPixelHeight()

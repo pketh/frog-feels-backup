@@ -33,7 +33,7 @@
     "pug": "2.0.0-rc.4"
   },
   "engines": {
-    "node": "4.4.5"
+    "node": "6.13.0"
   },
   "repository": {
     "type": "git",

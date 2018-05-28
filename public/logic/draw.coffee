@@ -255,7 +255,7 @@ drawingSaved = () ->
   $('.save-drawing').hide()
   $('.palette').hide()
   $('.drawing').hide()
-  $('#canvas').show()
+  $('#drawing-result').removeClass('hidden')
   $('.drawing-saved').show()
   iterateDrawingsCount()
 
@@ -263,6 +263,10 @@ saveCanvas = () ->
   canvas = document.getElementById("canvas")
   drawing = canvas.toDataURL("image/png")
   feeling = $('.topic')[0].textContent
+  
+  x = document.getElementById("drawing-result")
+  x.src = drawing
+
   $.post '/save-drawing', {'image': drawing, feeling: feeling}, (response) ->
     if response.code is 200
       drawingSaved()

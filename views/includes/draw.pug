@@ -32,19 +32,25 @@ section.palette
       li.color.palette-color
         .key-guide 6
     .color-well
-      li.shuffle(title="shuffle") 
-        span.label (/・・)ノ
+      li.next-palette(title="select next palette")
+        .next-palette-color (/
+        .next-palette-color ・・
+        .next-palette-color )ノ
         .key-guide 7
 
 section.drawing
   - var rows = 20
+  - var coordinateConstant = rows + 1
   while rows > 0
     .row
-      - rows--
+      - var row = Math.abs(rows - coordinateConstant)
       - var pixels = 20
       while pixels > 0
-        .pixel
+        - var pixel = Math.abs(pixels - coordinateConstant)
+        .pixel(data-x=pixel data-y=row)
         - pixels--
+      - rows--
+
 
 canvas#canvas(width='400' height='400')
 img#drawing-result.hidden(src='' width='400' height='400')
@@ -62,4 +68,4 @@ include drawing-saved
 
 // section.tips
 //   img(src=keys class='keys-icon')
-//   p 1-6 for colors. 7 for palettes.
+//   span 1-6 for colors. 7 for palettes.

@@ -85,35 +85,38 @@ section.palette
     bottom: -75%
     @media(max-width: 400px)
       display: none
-  .shuffle
+  .next-palette
     position: relative
     display: inline-block
     list-style-type: none
-    // background-color: transparent
     width: auto
     vertical-align: 80%
     color: secondary
     height: auto
-    padding-bottom: 1rem
-    // padding-bottom: 1rem
+    padding-bottom: 1rem 
+    .next-palette-color
+      display: inline-block 
+      vertical-align: middle
+      
     @media(max-width: 570px)
       vertical-align: 45%
+
     &:hover
-      color: white
+      opacity: 0.8
       cursor: pointer
     .key-guide
       bottom: -60%
 
-pixel-size-large = 26px
-pixel-size-medium = 24px
-pixel-size-small = 18px
-pixel-size-micro = 13px
-
+default-pixel-size-large = 26px
+default-pixel-size-medium = 24px
+default-pixel-size-small = 18px
+default-pixel-size-micro = 13px
 section.drawing
   margin-left: 0.5rem
   margin-bottom: 2rem
   cursor: pointer
   display: inline-block
+  width: 100%
   .row
     overflow: auto
     user-select: none
@@ -123,20 +126,18 @@ section.drawing
       border-bottom: 1px tertiary solid
   .pixel
     background-color: black
-    width: pixel-size-large
-    height: pixel-size-large
+    width: calc(100% / 22)
+    max-width: 26px
+    height: default-pixel-size-large 
     display: inline-block
     border-top: 1px tertiary solid
     border-left: 1px tertiary solid
     @media(max-width: 680px)
-      width: pixel-size-medium
-      height: pixel-size-medium
+      height: default-pixel-size-medium
     @media(max-width: 570px)
-      width: pixel-size-small
-      height: pixel-size-small
+      height: default-pixel-size-small
     @media(max-width: 400px)
-      width: pixel-size-micro
-      height: pixel-size-micro
+      height: default-pixel-size-micro
 
 #canvas
   margin-top: 1em
